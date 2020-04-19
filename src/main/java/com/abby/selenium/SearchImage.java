@@ -23,8 +23,8 @@ public class SearchImage{
 
 	public static void main(String[] args) throws InterruptedException, FileNotFoundException {
 		Properties properties = getConfig();
-		int clickIndex = Integer.parseInt(properties.getProperty("VISIT_RESULT"));
-		System.out.println(clickIndex);
+		int visitResult = Integer.parseInt(properties.getProperty("VISIT_RESULT"));
+
 		//使用驱动目录方式，使用浏览器
 		System.setProperty("webdriver.chrome.driver",".\\chromedriver.exe");
 		ChromeOptions options = new ChromeOptions();
@@ -40,7 +40,7 @@ public class SearchImage{
 		new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(By.className("graph-same-list-item")));
         
 		List<WebElement> resultList = driver.findElementsByClassName("graph-same-list-item");
-		resultList.get(clickIndex-1).click();
+		resultList.get(visitResult-1).click();
 		Thread.sleep(3000);
 		String handle = driver.getWindowHandle();
         for (String handles:driver.getWindowHandles()) {
