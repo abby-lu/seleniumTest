@@ -22,26 +22,28 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class SearchImage{
 
 	public static void main(String[] args) throws InterruptedException, FileNotFoundException {
-		Properties properties = getConfig();
-		int visitResult = Integer.parseInt(properties.getProperty("VISIT_RESULT"));
-
-		//使用驱动目录方式，使用浏览器
+		//Launch the browser
 		System.setProperty("webdriver.chrome.driver",".\\chromedriver.exe");
 		ChromeOptions options = new ChromeOptions();
-		//打开浏览器
 		options.addArguments("--disable-gpu","window-size=1024,768","--no-sandbox");
-		
 		RemoteWebDriver driver = new ChromeDriver(options);
+		
+		//Open website and search with local image
 		driver.get("http://www.baidu.com");
 		driver.findElementByClassName("soutu-btn").click();
-		String imgPath = "D:\\abby\\eclipse-workspace\\seleniumTest\\upload\\cat.jpg";
 		new WebDriverWait(driver,10).until(ExpectedConditions.presenceOfElementLocated(By.className("upload-pic")));
+		String imgPath = "D:\\abby\\eclipse-workspace\\seleniumTest\\upload\\cat.jpg";
 		driver.findElement(By.className("upload-pic")).sendKeys((imgPath));
 		new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(By.className("graph-same-list-item")));
         
+		//Get the VISIT_RESULT value from myconfig.properties file and click on the related result
+		Properties properties = getConfig();
+		int visitResult = Integer.parseInt(properties.getProperty("VISIT_RESULT"));
 		List<WebElement> resultList = driver.findElementsByClassName("graph-same-list-item");
 		resultList.get(visitResult-1).click();
-		Thread.sleep(3000);
+		Thread.sleep(2000);
+		
+		//Take screenshot for the last page
 		String handle = driver.getWindowHandle();
         for (String handles:driver.getWindowHandles()) {
         	if (handles.equals(handle)) {
@@ -50,15 +52,14 @@ public class SearchImage{
             driver.switchTo().window(handles);
             takeScreen(driver, "searchResult");
         }
-
-		System.out.println("Page title is: " + driver.getTitle());
 		driver.quit();
 	}
+	
 	public static void takeScreen(RemoteWebDriver driver,String filename) {
 		File src= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 		
         try {
-            // 拷贝截图文件到我们项目./Screenshots
+            //copy the generated screenshot to the given directory
         	FileUtils.copyFile(src, new File(".\\screenshots\\"+filename+".png"));
         }
          
